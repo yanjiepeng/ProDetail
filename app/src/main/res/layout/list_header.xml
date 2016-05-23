@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="match_parent"
+    android:background="#d7cfcd"
+    >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/headerStyle"
+        android:text="订单编号"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/headerStyle"
+        android:text="订单类型"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        style="@style/headerStyle"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="当前生产"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/headerStyle"
+        android:text="当前工位"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/headerStyle"
+        android:text="生产状态"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/headerStyle"
+        android:text="完成时间"
+        />
+
+
+</LinearLayout>

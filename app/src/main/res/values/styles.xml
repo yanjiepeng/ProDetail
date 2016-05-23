@@ -1,0 +1,49 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="textTitleStyle">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/DIMEN_30PX</item>
+        <item name="android:layout_marginTop">@dimen/DIMEN_10PX</item>
+        <item name="android:layout_marginBottom">@dimen/DIMEN_10PX</item>
+        <item name="android:layout_marginLeft">@dimen/DIMEN_10PX</item>
+
+    </style>
+
+    <style name="textViewStyle">
+        <item name="android:layout_marginLeft">@dimen/DIMEN_5PX</item>
+        <item name="android:layout_marginTop">@dimen/DIMEN_5PX</item>
+        <item name="android:layout_marginRight">@dimen/DIMEN_5PX</item>
+        <item name="android:layout_marginBottom">@dimen/DIMEN_5PX</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/DIMEN_40PX</item>
+        <item name="android:textColor">@color/black</item>
+
+    </style>
+
+    <style name="headerStyle">
+        <item name="android:layout_marginTop">@dimen/DIMEN_5PX</item>
+        <item name="android:layout_marginBottom">@dimen/DIMEN_5PX</item>
+        <item name="android:textSize">@dimen/DIMEN_24PX</item>
+        <item name="android:textColor">@color/header_color</item>
+
+
+    </style>
+    <style name="listItemStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/DIMEN_20PX</item>
+        <item name="android:layout_marginTop">@dimen/DIMEN_2PX</item>
+        <item name="android:layout_marginBottom">@dimen/DIMEN_2PX</item>
+
+    </style>
+
+
+</resources>

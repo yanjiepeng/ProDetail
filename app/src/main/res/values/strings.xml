@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ProDetail</string>
+    <string name="title_name">明匠生产进度看板</string>
+    <string name="proceed">加工流程</string>
+    <string name="cut">切割</string>
+    <string name="check">视觉监测</string>
+    <string name="code">激光刻码</string>
+    <string name="scan">扫码</string>
+    <string name="weld">焊接</string>
+    <string name="save">存储</string>
+    <string name="current_task">当前任务</string>
+</resources>
