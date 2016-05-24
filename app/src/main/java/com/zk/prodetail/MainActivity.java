@@ -22,6 +22,7 @@ import com.zk.util.AppConfig;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -188,13 +189,21 @@ public class MainActivity extends AppCompatActivity {
      * @return 数据字符串
      * @throws IOException
      */
-    private String ReceiveMsg(Socket socket) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
-        String line = "";
-        while ((line = br.readLine()) != null) {
-            msg += line;
+    private void ReceiveMsg(Socket socket) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "GBK"));
+        byte[] serverSay = new byte[1024];// 读取<1KB
+        InputStream is = null;
+        String msg = null;
+        while (true) {
+            try {
+                is = socket.getInputStream();
+                int len = is.read(serverSay);
+                msg = new String(serverSay, 0, len,"GBK");
+                Log.v("server msg", msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return  msg;
     }
 
     class NetworkThread extends Thread {
@@ -204,16 +213,13 @@ public class MainActivity extends AppCompatActivity {
             super.run();
 
             try {
-                socket = RequestSocket(AppConfig.HOST,AppConfig.PORT);
+                socket = RequestSocket(AppConfig.HOST, AppConfig.PORT);
                 ReceiveMsg(socket);
-                Log.e("Msg",msg);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }
-
 
 

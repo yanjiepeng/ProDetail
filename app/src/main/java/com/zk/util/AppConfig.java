@@ -5,6 +5,6 @@ package com.zk.util;
  */
 public class AppConfig {
 
-    public static String HOST = "192.168.1.119";
-    public static String PORT  = "8888";
+    public static String HOST = "192.168.1.102";
+    public static String PORT  = "3081";
 }
