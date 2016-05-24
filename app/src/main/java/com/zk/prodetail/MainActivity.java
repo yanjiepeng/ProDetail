@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -17,7 +18,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zk.adapter.TaskAdapter;
+import com.zk.util.AppConfig;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tv_proceed_cut, tv_proceed_check, tv_proceed_carving, tv_proceed_scan, tv_proceed_weld, tv_proceed_save;
     private ListView lv_current_task;
+    private String msg;
+    private Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         hideSystemUI();
         initContentWidget();
-        PrepareData();
+        new NetworkThread().start();
+
+
+//        PrepareData();
 
 
     }
@@ -158,6 +169,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * 获取socket
+     * @param host 服务器地址
+     * @param port 端口号
+     * @return socket
+     * @throws IOException
+     */
+    private Socket RequestSocket(String host , String port) throws IOException {
+        Socket socket = new Socket(host, Integer.parseInt(port));
+        return socket;
+    }
+
+    /**
+     * 读取socket的数 据
+     * @param socket
+     * @return 数据字符串
+     * @throws IOException
+     */
+    private String ReceiveMsg(Socket socket) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+        String line = "";
+        while ((line = br.readLine()) != null) {
+            msg += line;
+        }
+        return  msg;
+    }
+
+    class NetworkThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+
+            try {
+                socket = RequestSocket(AppConfig.HOST,AppConfig.PORT);
+                ReceiveMsg(socket);
+                Log.e("Msg",msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 }
 
 
