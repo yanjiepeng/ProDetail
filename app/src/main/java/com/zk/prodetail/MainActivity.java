@@ -112,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setCustomView(R.layout.titlebar);
         actionBar.setIcon(R.mipmap.mjlogo);
 
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
-                | ActionBar.DISPLAY_SHOW_HOME);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
 
     }
 
@@ -194,15 +193,33 @@ public class MainActivity extends AppCompatActivity {
         byte[] serverSay = new byte[1024];// 读取<1KB
         InputStream is = null;
         String msg = null;
-        while (true) {
+        boolean status = true ;
+        while ( status ) {
             try {
+                socket.sendUrgentData(0xFF);
                 is = socket.getInputStream();
                 int len = is.read(serverSay);
                 msg = new String(serverSay, 0, len,"GBK");
                 Log.v("server msg", msg);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                status = false;
+                new NetworkThread().start();
             }
+        }
+    }
+
+    /**
+     * 判断是否断开连接，断开返回true,没有返回false
+     * @param socket
+     * @return
+     */
+    public Boolean isServerClose(Socket socket){
+        try{
+            socket.sendUrgentData(0xff);//发送1个字节的紧急数据，默认情况下，服务器端没有开启紧急数据处理，不影响正常通信
+            return false;
+        }catch(Exception se){
+            return true;
         }
     }
 
