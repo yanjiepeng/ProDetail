@@ -17,8 +17,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zk.adapter.TaskAdapter;
+import com.zk.bean.TaskInfo;
 import com.zk.util.AppConfig;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
         actionBar.setCustomView(R.layout.titlebar);
+
         actionBar.setIcon(R.mipmap.mjlogo);
 
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
@@ -160,15 +166,10 @@ public class MainActivity extends AppCompatActivity {
     private void stopFlick(View view) {
 
         if (null == view) {
-
             return;
-
         }
-
         view.clearAnimation();
-
     }
-
 
     /**
      * 获取socket
@@ -201,6 +202,14 @@ public class MainActivity extends AppCompatActivity {
                 int len = is.read(serverSay);
                 msg = new String(serverSay, 0, len,"GBK");
                 Log.v("server msg", msg);
+                String jsonStr = new String(msg.getBytes("GBK"),"UTF-8");
+                Gson gson =new GsonBuilder().create();
+
+                //此处处理JSON数据
+
+                TaskInfo taskInfo = gson.fromJson(jsonStr, TaskInfo.class);
+                Log.v("Gson",taskInfo.toString());
+
             } catch (Exception e) {
                 e.printStackTrace();
                 status = false;
@@ -223,15 +232,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 联网线程
+     */
     class NetworkThread extends Thread {
-
         @Override
         public void run() {
             super.run();
-
             try {
                 socket = RequestSocket(AppConfig.HOST, AppConfig.PORT);
                 ReceiveMsg(socket);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

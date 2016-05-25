@@ -39,9 +39,9 @@
     </style>
     <style name="listItemStyle">
         <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/DIMEN_20PX</item>
-        <item name="android:layout_marginTop">@dimen/DIMEN_2PX</item>
-        <item name="android:layout_marginBottom">@dimen/DIMEN_2PX</item>
+        <item name="android:textSize">@dimen/DIMEN_25PX</item>
+        <item name="android:layout_marginTop">@dimen/DIMEN_5PX</item>
+        <item name="android:layout_marginBottom">@dimen/DIMEN_5PX</item>
 
     </style>
 
