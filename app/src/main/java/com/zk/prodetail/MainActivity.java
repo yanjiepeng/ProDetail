@@ -2,33 +2,26 @@ package com.zk.prodetail;
 
 import android.app.ActionBar;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.zk.adapter.TaskAdapter;
 import com.zk.bean.TaskInfo;
-import com.zk.util.AppConfig;
+import com.zk.service.SocketService;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +36,21 @@ public class MainActivity extends AppCompatActivity {
     private String msg;
     private Socket socket;
 
+    public static Handler mHandler = new Handler() {
+        Gson gson = new Gson();
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            String res = (String) msg.obj;
+            if (res != "" && res !=null) {
+                TaskInfo ti = gson.fromJson(res , TaskInfo.class);
+                Log.i("page",ti.toString());
+            }
+
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +60,8 @@ public class MainActivity extends AppCompatActivity {
         initActionBar();
         hideSystemUI();
         initContentWidget();
-        new NetworkThread().start();
 
-
+        startService(new Intent(this, SocketService.class));
 //        PrepareData();
 
 
@@ -169,84 +176,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         view.clearAnimation();
-    }
-
-    /**
-     * 获取socket
-     * @param host 服务器地址
-     * @param port 端口号
-     * @return socket
-     * @throws IOException
-     */
-    private Socket RequestSocket(String host , String port) throws IOException {
-        Socket socket = new Socket(host, Integer.parseInt(port));
-        return socket;
-    }
-
-    /**
-     * 读取socket的数 据
-     * @param socket
-     * @return 数据字符串
-     * @throws IOException
-     */
-    private void ReceiveMsg(Socket socket) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "GBK"));
-        byte[] serverSay = new byte[1024];// 读取<1KB
-        InputStream is = null;
-        String msg = null;
-        boolean status = true ;
-        while ( status ) {
-            try {
-                socket.sendUrgentData(0xFF);
-                is = socket.getInputStream();
-                int len = is.read(serverSay);
-                msg = new String(serverSay, 0, len,"GBK");
-                Log.v("server msg", msg);
-                String jsonStr = new String(msg.getBytes("GBK"),"UTF-8");
-                Gson gson =new GsonBuilder().create();
-
-                //此处处理JSON数据
-
-                TaskInfo taskInfo = gson.fromJson(jsonStr, TaskInfo.class);
-                Log.v("Gson",taskInfo.toString());
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                status = false;
-                new NetworkThread().start();
-            }
-        }
-    }
-
-    /**
-     * 判断是否断开连接，断开返回true,没有返回false
-     * @param socket
-     * @return
-     */
-    public Boolean isServerClose(Socket socket){
-        try{
-            socket.sendUrgentData(0xff);//发送1个字节的紧急数据，默认情况下，服务器端没有开启紧急数据处理，不影响正常通信
-            return false;
-        }catch(Exception se){
-            return true;
-        }
-    }
-
-    /**
-     * 联网线程
-     */
-    class NetworkThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            try {
-                socket = RequestSocket(AppConfig.HOST, AppConfig.PORT);
-                ReceiveMsg(socket);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
 
