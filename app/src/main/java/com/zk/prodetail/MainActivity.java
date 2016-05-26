@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,12 +16,15 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.zk.adapter.TaskAdapter;
 import com.zk.bean.TaskInfo;
+import com.zk.event.TaskEvent;
 import com.zk.service.SocketService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -32,29 +36,83 @@ public class MainActivity extends AppCompatActivity {
 
 
     private TextView tv_proceed_cut, tv_proceed_check, tv_proceed_carving, tv_proceed_scan, tv_proceed_weld, tv_proceed_save;
-    private ListView lv_current_task;
+    private static ListView lv_current_task;
     private String msg;
     private Socket socket;
+    public static List<TaskInfo> current_task = new ArrayList<TaskInfo>();;
+   public static  List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+    TaskAdapter mAdapter ;
 
-    public static Handler mHandler = new Handler() {
+
+   /* public static Handler mHandler = new Handler() {
         Gson gson = new Gson();
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
             String res = (String) msg.obj;
-            if (res != "" && res !=null) {
-                TaskInfo ti = gson.fromJson(res , TaskInfo.class);
-                Log.i("page",ti.toString());
+            if (res != "" && res != null) {
+                TaskInfo ti = gson.fromJson(res, TaskInfo.class);
+                Log.i("page", ti.toString());
+                PrepareData(DealData(ti));
+
             }
 
         }
-    };
+    }   ;*/
+
+
+    /**
+     * 此处针对每次传来的数据进行处理
+     * @param ti
+     */
+    private static List<TaskInfo> DealData(TaskInfo ti) {
+
+
+
+        //当前任务列表为空就加入任务列表
+        if (current_task.size()==0) {
+            current_task.add(ti);
+        }else if (ti.getKind().equals(current_task.get(0).getKind())){
+            current_task.add(ti);
+        }else if (   !ti.getKind().equals(current_task.get(0).getKind()) ){
+            current_task.clear();
+            current_task.add(ti);
+        }
+
+        return current_task;
+
+    }
+
+    private static void PrepareData(List<TaskInfo> current_task) {
+
+        int size = current_task.size();
+        list.clear();
+        for (int i = 0; i < size; i++) {
+
+            Map<String, Object> map = new HashMap<String, Object>();
+
+            map.put("id",  current_task.get(i).getTaskid());
+            map.put("type",current_task.get(i).getType());
+            map.put("kind",current_task.get(i).getKind());
+            map.put("name", current_task.get(i).getName());
+            map.put("workzone", current_task.get(i).getWorkzone());
+            map.put("status", current_task.get(i).getStatus());
+            map.put("time", current_task.get(i).getTime());
+
+            list.add(map);
+        }
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        EventBus.getDefault().register(this); //注册eventBus
 
 
         initActionBar();
@@ -67,6 +125,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Subscribe
+    public void onEventMainThread(TaskEvent event) {
+
+
+        Gson gson = new Gson();
+        Log.e("Event",event.getMsg());
+        TaskInfo ti = gson.fromJson(event.getMsg(), TaskInfo.class);
+        PrepareData(DealData(ti));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+             mAdapter.notifyDataSetChanged();
+            }
+        });
+
+    }
+
+
+
     /**
      * 此方法用于获取数据
      *
@@ -74,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private List PrepareData() {
 
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
 
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -90,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
         return list;
     }
+
 
     /**
      * 初始化主界面控件
@@ -108,10 +187,13 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater lif = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View headerView = lif.inflate(R.layout.list_header, lv_current_task, false);
+        mAdapter = new TaskAdapter(this , list) ;
+        lv_current_task.setAdapter(mAdapter );
+
 
         lv_current_task.addHeaderView(headerView);
 
-        lv_current_task.setAdapter(new TaskAdapter(MainActivity.this, PrepareData()));
+
     }
 
     /**
@@ -177,6 +259,8 @@ public class MainActivity extends AppCompatActivity {
         }
         view.clearAnimation();
     }
+
+
 }
 
 

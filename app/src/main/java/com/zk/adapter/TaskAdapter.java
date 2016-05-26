@@ -81,7 +81,7 @@ public class TaskAdapter extends BaseAdapter {
 
         //此处获取数据并设置显示
 
-        Map map = list.get(position & list.size());
+        Map map = list.get(position % list.size());
 
         viewHolder.tv_id.setText((String) map.get("id"));
         viewHolder.tv_type.setText((CharSequence) map.get("type"));
