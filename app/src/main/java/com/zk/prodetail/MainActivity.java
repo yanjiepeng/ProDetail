@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.zk.adapter.TaskAdapter;
 import com.zk.bean.TaskInfo;
+import com.zk.event.StatusEvent;
 import com.zk.event.TaskEvent;
 import com.zk.service.SocketService;
 
@@ -111,9 +112,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         EventBus.getDefault().register(this); //注册eventBus
-
 
         initActionBar();
         hideSystemUI();
@@ -125,25 +124,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * EventBus自动回调
+     * @param event
+     */
     @Subscribe
     public void onEventMainThread(TaskEvent event) {
 
 
         Gson gson = new Gson();
-        Log.e("Event",event.getMsg());
+        Log.e("Event", event.getMsg());
         TaskInfo ti = gson.fromJson(event.getMsg(), TaskInfo.class);
         PrepareData(DealData(ti));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-             mAdapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
         });
-
     }
 
 
+    @Subscribe
+    public void onEventMainThread(StatusEvent event) {
+
+        Log.e("status",event.getStatus());
+
+    }
 
     /**
      * 此方法用于获取数据
