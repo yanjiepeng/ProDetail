@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onEventMainThread(StatusEvent event) {
 
-        Log.e("status",event.getStatus());
+        Log.e("status", event.getStatus());
 
     }
 
