@@ -22,6 +22,10 @@
         <service
             android:name="com.zk.service.SocketService"
             android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.zk.service.SocketService2"
+            android:enabled="true"
             android:exported="true"></service>
     </application>
 

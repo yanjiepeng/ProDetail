@@ -23,6 +23,7 @@ import com.zk.bean.TaskInfo;
 import com.zk.event.StatusEvent;
 import com.zk.event.TaskEvent;
 import com.zk.service.SocketService;
+import com.zk.service.SocketService2;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         initContentWidget();
 
         startService(new Intent(this, SocketService.class));
+        startService(new Intent(this, SocketService2.class));
 //        PrepareData();
 
 
