@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
 
         View headerView = lif.inflate(R.layout.list_header, lv_current_task, false);
 
-        lv_current_task.addHeaderView(headerView);
+        lv_current_task.addHeaderView(headerView); //需在setadapter前调用
+
         mAdapter = new TaskAdapter(this, list);
         lv_current_task.setAdapter(mAdapter );
 
