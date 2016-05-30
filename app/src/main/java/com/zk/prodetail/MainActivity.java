@@ -147,10 +147,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 处理机器人状态更新UI
+     * @param event
+     */
+
     @Subscribe
     public void onEventMainThread(StatusEvent event) {
 
         Log.e("status", event.getStatus());
+
+
 
     }
 
@@ -196,12 +203,10 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater lif = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View headerView = lif.inflate(R.layout.list_header, lv_current_task, false);
-        mAdapter = new TaskAdapter(this , list) ;
-        lv_current_task.setAdapter(mAdapter );
-
 
         lv_current_task.addHeaderView(headerView);
-
+        mAdapter = new TaskAdapter(this, list);
+        lv_current_task.setAdapter(mAdapter );
 
     }
 
